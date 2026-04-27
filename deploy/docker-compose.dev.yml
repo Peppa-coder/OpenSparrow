@@ -1,0 +1,34 @@
+# OpenSparrow — Development environment
+# Usage: docker compose -f deploy/docker-compose.dev.yml up --build
+
+services:
+  core:
+    build:
+      context: ../sparrow-core
+    container_name: sparrow-core-dev
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    volumes:
+      - ../sparrow-core/sparrow:/app/sparrow
+      - sparrow-data-dev:/app/data
+    environment:
+      - SPARROW_DEBUG=true
+      - SPARROW_DB_PATH=/app/data/sparrow.db
+    command: uvicorn sparrow.main:app --host 0.0.0.0 --port 8080 --reload
+
+  agent:
+    build:
+      context: ../sparrow-agent
+    container_name: sparrow-agent-dev
+    volumes:
+      - ../sparrow-agent/agent:/app/agent
+      - ${SPARROW_WORKSPACE:-~/sparrow-workspace}:/workspace
+    environment:
+      - SPARROW_CORE_URL=ws://core:8081/ws/agent
+      - SPARROW_WORKSPACE=/workspace
+    depends_on:
+      - core
+
+volumes:
+  sparrow-data-dev:

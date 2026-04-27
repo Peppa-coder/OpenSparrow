@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.backends.build"
+
+[project]
+name = "opensparrow-agent"
+version = "0.1.0"
+description = "OpenSparrow Local Agent — Sandboxed executor for file ops, shell, and monitoring"
+license = "MIT"
+requires-python = ">=3.11"
+dependencies = [
+    "websockets>=13.0",
+    "psutil>=6.0.0",
+    "pydantic>=2.9.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-asyncio>=0.24.0"]
+
+[project.scripts]
+sparrow-agent = "agent.main:cli_entry"

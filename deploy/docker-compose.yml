@@ -1,0 +1,50 @@
+# OpenSparrow — Production deployment
+# Usage: docker compose -f deploy/docker-compose.yml up -d
+
+services:
+  core:
+    build:
+      context: ../sparrow-core
+    container_name: sparrow-core
+    ports:
+      - "${SPARROW_PORT:-8080}:8080"
+      - "${SPARROW_AGENT_PORT:-8081}:8081"
+    volumes:
+      - sparrow-data:/app/data
+    env_file:
+      - ../.env
+    environment:
+      - SPARROW_DB_PATH=/app/data/sparrow.db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  agent:
+    build:
+      context: ../sparrow-agent
+    container_name: sparrow-agent
+    volumes:
+      - ${SPARROW_WORKSPACE:-~/sparrow-workspace}:/workspace
+    environment:
+      - SPARROW_CORE_URL=ws://core:8081/ws/agent
+      - SPARROW_WORKSPACE=/workspace
+    depends_on:
+      core:
+        condition: service_healthy
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ../sparrow-web
+    container_name: sparrow-web
+    ports:
+      - "${SPARROW_WEB_PORT:-3000}:3000"
+    depends_on:
+      - core
+    restart: unless-stopped
+
+volumes:
+  sparrow-data:

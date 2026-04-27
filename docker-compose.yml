@@ -1,0 +1,40 @@
+# OpenSparrow — One-click deployment
+# Usage: docker compose up -d
+
+services:
+  core:
+    build: ./sparrow-core
+    container_name: sparrow-core
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    volumes:
+      - sparrow-data:/app/data
+    environment:
+      - SPARROW_DB_PATH=/app/data/sparrow.db
+      - SPARROW_WORKSPACE_ROOT=/workspace
+    restart: unless-stopped
+
+  agent:
+    build: ./sparrow-agent
+    container_name: sparrow-agent
+    volumes:
+      - ${SPARROW_WORKSPACE:-~/sparrow-workspace}:/workspace
+    environment:
+      - SPARROW_CORE_URL=ws://core:8081/ws/agent
+      - SPARROW_WORKSPACE=/workspace
+    depends_on:
+      - core
+    restart: unless-stopped
+
+  web:
+    build: ./sparrow-web
+    container_name: sparrow-web
+    ports:
+      - "3000:3000"
+    depends_on:
+      - core
+    restart: unless-stopped
+
+volumes:
+  sparrow-data:

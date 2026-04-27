@@ -1,0 +1,30 @@
+# OpenSparrow Configuration Example
+# Copy this file to .env and customize
+
+# ─── Server ──────────────────────────────────────────────────────
+SPARROW_HOST=0.0.0.0
+SPARROW_PORT=8080
+SPARROW_DEBUG=false
+
+# ─── Security ────────────────────────────────────────────────────
+# Auto-generated on first run. Override if needed.
+# SPARROW_SECRET_KEY=your-secret-key-here
+# SPARROW_ADMIN_TOKEN=your-admin-token-here
+
+# ─── Workspace ───────────────────────────────────────────────────
+SPARROW_WORKSPACE=~/sparrow-workspace
+
+# ─── LLM Provider ───────────────────────────────────────────────
+# Options: ollama, openai, anthropic
+SPARROW_LLM_PROVIDER=ollama
+SPARROW_LLM_MODEL=llama3
+SPARROW_LLM_BASE_URL=http://localhost:11434
+# SPARROW_LLM_API_KEY=sk-...
+
+# ─── Telegram Bot (optional) ────────────────────────────────────
+# SPARROW_TELEGRAM_BOT_TOKEN=your-bot-token
+# SPARROW_TELEGRAM_ALLOWED_USERS=user1,user2
+
+# ─── Docker Compose Ports ───────────────────────────────────────
+SPARROW_WEB_PORT=3000
+SPARROW_AGENT_PORT=8081
